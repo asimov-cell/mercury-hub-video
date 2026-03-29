@@ -28,16 +28,23 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Create FFmpeg symlinks
+      - name: Setup FFmpeg and FFprobe
         run: |
-          # Create symlinks AFTER npm install so they don't get overwritten
+          # Setup FFmpeg
           mkdir -p node_modules/@ffmpeg-installer/linux-x64
-          ln -sf /usr/bin/ffmpeg node_modules/@ffmpeg-installer/linux-x64/ffmpeg
+          cp /usr/bin/ffmpeg node_modules/@ffmpeg-installer/linux-x64/ffmpeg
+          echo '{"name":"linux-x64","version":"1.0.0","description":"FFmpeg binary"}' > node_modules/@ffmpeg-installer/linux-x64/package.json
+          chmod +x node_modules/@ffmpeg-installer/linux-x64/ffmpeg
+          
+          # Setup FFprobe
           mkdir -p node_modules/@ffprobe-installer/linux-x64
-          ln -sf /usr/bin/ffprobe node_modules/@ffprobe-installer/linux-x64/ffprobe
+          cp /usr/bin/ffprobe node_modules/@ffprobe-installer/linux-x64/ffprobe
+          echo '{"name":"linux-x64","version":"1.0.0","description":"FFprobe binary"}' > node_modules/@ffprobe-installer/linux-x64/package.json
+          chmod +x node_modules/@ffprobe-installer/linux-x64/ffprobe
+          
           # Verify
-          ls -la node_modules/@ffmpeg-installer/linux-x64/
-          ls -la node_modules/@ffprobe-installer/linux-x64/
+          node_modules/@ffmpeg-installer/linux-x64/ffmpeg -version | head -1
+          node_modules/@ffprobe-installer/linux-x64/ffprobe -version | head -1
 
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
