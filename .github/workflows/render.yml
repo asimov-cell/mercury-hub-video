@@ -3,6 +3,10 @@ name: Render Video
 on:
   push:
     branches: [master, main]
+    paths:
+      - 'src/**'
+      - 'project.tsx'
+      - 'render.mjs'
   workflow_dispatch:
 
 jobs:
@@ -21,7 +25,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      - name: Install Playwright
         run: npx playwright install chromium --with-deps
 
       - name: Install FFmpeg
@@ -35,6 +39,6 @@ jobs:
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
         with:
-          name: mercury-hub-video
+          name: mercury-hub-video-${{ github.run_id }}
           path: output/mercury-hub.mp4
-          retention-days: 7
+          retention-days: 30
