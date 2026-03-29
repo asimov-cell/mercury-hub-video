@@ -1,0 +1,40 @@
+name: Render Video
+
+on:
+  push:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install chromium --with-deps
+
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Render video
+        run: node render.mjs
+        env:
+          NODE_ENV: development
+
+      - name: Upload video artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mercury-hub-video
+          path: output/mercury-hub.mp4
+          retention-days: 7
