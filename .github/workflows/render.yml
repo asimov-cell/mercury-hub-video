@@ -23,16 +23,21 @@ jobs:
           node-version: '20'
 
       - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create FFmpeg symlinks
         run: |
-          sudo apt-get update && sudo apt-get install -y ffmpeg
-          # Create fake ffmpeg installer structure that revideo expects
+          # Create symlinks AFTER npm install so they don't get overwritten
           mkdir -p node_modules/@ffmpeg-installer/linux-x64
           ln -sf /usr/bin/ffmpeg node_modules/@ffmpeg-installer/linux-x64/ffmpeg
           mkdir -p node_modules/@ffprobe-installer/linux-x64
           ln -sf /usr/bin/ffprobe node_modules/@ffprobe-installer/linux-x64/ffprobe
-
-      - name: Install dependencies
-        run: npm install
+          # Verify
+          ls -la node_modules/@ffmpeg-installer/linux-x64/
+          ls -la node_modules/@ffprobe-installer/linux-x64/
 
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
