@@ -43,23 +43,17 @@ async function main() {
       plugins: [revideoPlugin()],
     },
     progressCallback: logProgress,
+    puppeteer: {
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--disable-dev-shm-usage',
+        '--disable-software-rasterizer',
+        '--disable-accelerated-2d-canvas',
+      ],
+    },
   };
-
-  // Use system ffmpeg/ffprobe if provided via env
-  const ffmpegPath = process.env.FFMPEG_PATH;
-  const ffprobePath = process.env.FFPROBE_PATH;
-  
-  if (ffmpegPath) {
-    settings.ffmpeg = settings.ffmpeg || {};
-    settings.ffmpeg.path = ffmpegPath;
-    console.log('Using FFmpeg from:', ffmpegPath);
-  }
-  
-  if (ffprobePath) {
-    settings.ffmpeg = settings.ffmpeg || {};
-    settings.ffmpeg.ffprobePath = ffprobePath;
-    console.log('Using FFprobe from:', ffprobePath);
-  }
 
   try {
     const outputPath = await renderVideo({
