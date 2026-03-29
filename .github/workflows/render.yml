@@ -23,7 +23,13 @@ jobs:
           node-version: '20'
 
       - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          # Create fake ffmpeg installer structure that revideo expects
+          mkdir -p node_modules/@ffmpeg-installer/linux-x64
+          ln -sf /usr/bin/ffmpeg node_modules/@ffmpeg-installer/linux-x64/ffmpeg
+          mkdir -p node_modules/@ffprobe-installer/linux-x64
+          ln -sf /usr/bin/ffprobe node_modules/@ffprobe-installer/linux-x64/ffprobe
 
       - name: Install dependencies
         run: npm install
@@ -35,8 +41,6 @@ jobs:
         run: node render.mjs
         env:
           NODE_ENV: development
-          FFMPEG_PATH: /usr/bin/ffmpeg
-          FFPROBE_PATH: /usr/bin/ffprobe
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
