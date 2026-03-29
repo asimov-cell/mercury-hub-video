@@ -25,11 +25,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          # Also install the npm ffmpeg installer
+          npm install @ffmpeg-installer/ffmpeg --save-dev
+
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
-
-      - name: Install FFmpeg
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Render video
         run: node render.mjs
