@@ -1,7 +1,6 @@
 /**
  * Render Mercury Hub Video
  * Using Revideo headless renderer
- * Optimizado para GitHub Actions y local
  */
 
 import {renderVideo} from '@revideo/renderer';
@@ -34,7 +33,7 @@ async function main() {
     outFile: path.join(outputDir, 'mercury-hub.mp4'),
     outDir: outputDir,
     workers: 1,
-    range: [1, 30], // 30 segundos (video completo)
+    range: [1, 30],
     dimensions: [1080, 1920],
     logProgress: true,
     ffmpeg: {
@@ -46,13 +45,20 @@ async function main() {
     progressCallback: logProgress,
   };
 
-  // Solo agregar puppeteer si hay un executablePath específico
-  const chromiumPath = process.env.CHROMIUM_PATH;
-  if (chromiumPath) {
-    settings.puppeteer = {
-      executablePath: chromiumPath,
-      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage'],
-    };
+  // Use system ffmpeg/ffprobe if provided via env
+  const ffmpegPath = process.env.FFMPEG_PATH;
+  const ffprobePath = process.env.FFPROBE_PATH;
+  
+  if (ffmpegPath) {
+    settings.ffmpeg = settings.ffmpeg || {};
+    settings.ffmpeg.path = ffmpegPath;
+    console.log('Using FFmpeg from:', ffmpegPath);
+  }
+  
+  if (ffprobePath) {
+    settings.ffmpeg = settings.ffmpeg || {};
+    settings.ffmpeg.ffprobePath = ffprobePath;
+    console.log('Using FFprobe from:', ffprobePath);
   }
 
   try {

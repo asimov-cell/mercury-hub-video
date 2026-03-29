@@ -23,12 +23,10 @@ jobs:
           node-version: '20'
 
       - name: Install FFmpeg
-        run: |
-          sudo apt-get update && sudo apt-get install -y ffmpeg
-          which ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Install dependencies
-        run: npm install --platform=linux --arch=x64
+        run: npm install
 
       - name: Install Playwright
         run: npx playwright install chromium --with-deps
@@ -37,6 +35,8 @@ jobs:
         run: node render.mjs
         env:
           NODE_ENV: development
+          FFMPEG_PATH: /usr/bin/ffmpeg
+          FFPROBE_PATH: /usr/bin/ffprobe
 
       - name: Upload video artifact
         uses: actions/upload-artifact@v4
